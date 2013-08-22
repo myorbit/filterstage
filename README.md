@@ -14,8 +14,8 @@ To drive a filter to a certain position type
 
     {"fpos":{"type":<pass>,"pos":<x>}}
 
-with <pass> = "short" or "long"
-and <x> = [-32768:32767]
+with `<pass>` = "short" or "long"
+and `<x>` = [-32768:32767]
 
 Example: `{"fpos":{"type":"short","pos":230}}`
 
