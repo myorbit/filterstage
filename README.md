@@ -19,8 +19,21 @@ and `<x>` = [-32768:32767]
 
 Example: `{"fpos":{"type":"short","pos":230}}`
 
-To Do
------
+Other possible commands are:
 
-Currently only positioning is possible. Changing motor parameters and readout of the motor status will be implemented in future.
+`{"fdrive":{"type":"short","action":"hardstop"}}`   immediate full stop
+`{"fdrive":{"type":"short","action":"softstop"}}`   stops motor deceleration phase
+`{"fdrive":{"type":"short","action":"resetpos"}}`   set actual position to zero
+`{"fdrive":{"type":"short","action":"resetdefault"}}`   overwrite RAM with OTP contents
+`{"fdrive":{"type":"short","action":"gotosecure"}}`   drives to secure position
+
+`{"fmotor":{"type":"short","ihold":2, ... }}`   set motor parameter
+
+`{"fstall":{"type":"short","dc100":0, ... }}`   set stall detection parameter
+
+
+The controller can send back the motor status or stall detection status:
+
+`{"fstat":{"type":"short","steploss":0, ... }}`   send motor status
+`{"fstall":{"type":"short","absstall":0, ... }}`   send stall detection status
 
