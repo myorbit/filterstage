@@ -258,6 +258,47 @@ void processMessage(aJsonObject *msg)
       }
     }
   }
+  
+  // Drive and Stop filter; e.g. {"fdrive":{"type":"short","action":"softstop"}}
+  aJsonObject *fdrive = aJson.getObjectItem(msg, "fdrive");
+  if (fdrive != NULL)
+  {
+    String filter_type;
+    aJsonObject *fdriveitem = aJson.getObjectItem(fdrive, "type");
+    if (fdriveitem->type == aJson_String)
+      filter_type = fdriveitem->valuestring;
+        
+    fdriveitem = aJson.getObjectItem(fdrive, "action");
+    if (fdriveitem->valuestring == "hardstop")
+    {
+      hardStop(DRV_ALL);  // both filters
+    }
+    else if (fdriveitem->valuestring == "softstop")
+    {
+      softStop(DRV_ALL);  // both filters
+    }
+    else if (fdriveitem->valuestring == "resetpos")
+    {
+      if (filter_type == "short")
+        resetPosition(DRV_SHORT);
+      else if (filter_type == "long")
+        resetPosition(DRV_LONG);
+    }
+    else if (fdriveitem->valuestring == "resetdefault")
+    {
+      if (filter_type == "short")
+        resetToDefault(DRV_SHORT);
+      else if (filter_type == "long")
+        resetToDefault(DRV_LONG);
+    }
+    else if (fdriveitem->valuestring == "gotosecure")
+    {
+      if (filter_type == "short")
+        gotoSecurePosition(DRV_SHORT);
+      else if (filter_type == "long")
+        gotoSecurePosition(DRV_LONG);
+    }
+  }
 }
 
 
@@ -348,16 +389,16 @@ aJsonObject *createMsgStall(char* filter_type)
     getFullStatus1(DRV_SHORT, NULL, &fstallShort);  // Get AbsThr and DelThr
     getFullStatus2(DRV_SHORT, NULL, NULL, &fstallShort);
     
-    aJson.addNumberToObject(sub, "dc100", fstallLong.DC100);
-    aJson.addNumberToObject(sub, "fs2stallen", fstallLong.FS2StallEn);
-    aJson.addNumberToObject(sub, "pwmjen", fstallLong.PWMJEn);
-    aJson.addNumberToObject(sub, "dc100sten", fstallLong.DC100StEn);
-    aJson.addNumberToObject(sub, "minsamples", fstallLong.MinSamples);
-    aJson.addNumberToObject(sub, "delstallhi", fstallLong.DelStallHi);
-    aJson.addNumberToObject(sub, "delstalllo", fstallLong.DelStallLo);
-    aJson.addNumberToObject(sub, "absstall", fstallLong.AbsStall);
-    aJson.addNumberToObject(sub, "absthr", fstallLong.AbsThr);
-    aJson.addNumberToObject(sub, "delthr", fstallLong.DelThr);
+    aJson.addNumberToObject(sub, "dc100", fstallShort.DC100);
+    aJson.addNumberToObject(sub, "fs2stallen", fstallShort.FS2StallEn);
+    aJson.addNumberToObject(sub, "pwmjen", fstallShort.PWMJEn);
+    aJson.addNumberToObject(sub, "dc100sten", fstallShort.DC100StEn);
+    aJson.addNumberToObject(sub, "minsamples", fstallShort.MinSamples);
+    aJson.addNumberToObject(sub, "delstallhi", fstallShort.DelStallHi);
+    aJson.addNumberToObject(sub, "delstalllo", fstallShort.DelStallLo);
+    aJson.addNumberToObject(sub, "absstall", fstallShort.AbsStall);
+    aJson.addNumberToObject(sub, "absthr", fstallShort.AbsThr);
+    aJson.addNumberToObject(sub, "delthr", fstallShort.DelThr);
   }
   else if (filter_type == "long")
   {
