@@ -262,6 +262,75 @@ void processMessage(aJsonObject *msg)
 
 
 /**
+ * @brief Generate JSON message to send motor status information
+ *
+ * @param filter_type Type of optical filter: "short" / "long"
+ */
+aJsonObject *createMsgMotorStatus(char* filter_type)
+{
+  aJsonObject *root, *msg;
+  root = aJson.createObject();
+
+  if (filter_type == "short")
+  {
+    getFullStatus1(DRV_SHORT, &fstatShort, NULL);
+    
+    aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
+    aJson.addStringToObject(msg, "type", filter_type);
+    aJson.addNumberToObject(msg, "irun", fstatLong.IRun);
+    aJson.addNumberToObject(msg, "ihold", fstatLong.IHold);
+    aJson.addNumberToObject(msg, "vmax", fstatLong.VMax);
+    aJson.addNumberToObject(msg, "vmin", fstatLong.VMin);
+    aJson.addNumberToObject(msg, "acc", fstatLong.Acc);
+    aJson.addNumberToObject(msg, "shaft", fstatLong.Shaft);
+    aJson.addNumberToObject(msg, "stepmode", fstatLong.StepMode);
+    aJson.addNumberToObject(msg, "accshape", fstatLong.AccShape);
+    aJson.addNumberToObject(msg, "tinfo", fstatLong.TInfo);
+    aJson.addNumberToObject(msg, "tw", fstatLong.TW);
+    aJson.addNumberToObject(msg, "tsd", fstatLong.TSD);
+    aJson.addNumberToObject(msg, "uv2", fstatLong.UV2);
+    aJson.addNumberToObject(msg, "eldef", fstatLong.ElDef);
+    aJson.addNumberToObject(msg, "steploss", fstatLong.SteppLoss);
+    aJson.addNumberToObject(msg, "vddreset", fstatLong.VddReset);
+    aJson.addNumberToObject(msg, "cpfail", fstatLong.CPFail);
+    aJson.addNumberToObject(msg, "ovc2", fstatLong.OVC2);
+    aJson.addNumberToObject(msg, "ovc1", fstatLong.OVC1);
+    aJson.addNumberToObject(msg, "esw", fstatLong.ESW);
+    aJson.addNumberToObject(msg, "motion", fstatLong.Motion);
+  }
+  else if (filter_type == "long")
+  {
+    getFullStatus1(DRV_LONG, &fstatLong, NULL);
+    
+    aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
+    aJson.addStringToObject(msg, "type", filter_type);
+    aJson.addNumberToObject(msg, "irun", fstatShort.IRun);
+    aJson.addNumberToObject(msg, "ihold", fstatShort.IHold);
+    aJson.addNumberToObject(msg, "vmax", fstatShort.VMax);
+    aJson.addNumberToObject(msg, "vmin", fstatShort.VMin);
+    aJson.addNumberToObject(msg, "acc", fstatShort.Acc);
+    aJson.addNumberToObject(msg, "shaft", fstatShort.Shaft);
+    aJson.addNumberToObject(msg, "stepmode", fstatShort.StepMode);
+    aJson.addNumberToObject(msg, "accshape", fstatShort.AccShape);
+    aJson.addNumberToObject(msg, "tinfo", fstatShort.TInfo);
+    aJson.addNumberToObject(msg, "tw", fstatShort.TW);
+    aJson.addNumberToObject(msg, "tsd", fstatShort.TSD);
+    aJson.addNumberToObject(msg, "uv2", fstatShort.UV2);
+    aJson.addNumberToObject(msg, "eldef", fstatShort.ElDef);
+    aJson.addNumberToObject(msg, "steploss", fstatShort.SteppLoss);
+    aJson.addNumberToObject(msg, "vddreset", fstatShort.VddReset);
+    aJson.addNumberToObject(msg, "cpfail", fstatShort.CPFail);
+    aJson.addNumberToObject(msg, "ovc2", fstatShort.OVC2);
+    aJson.addNumberToObject(msg, "ovc1", fstatShort.OVC1);
+    aJson.addNumberToObject(msg, "esw", fstatShort.ESW);
+    aJson.addNumberToObject(msg, "motion", fstatShort.Motion);
+  }
+
+  return root;
+}
+
+
+/**
  * @brief Init the TMC223 drivers
  */
 void initDriver( void )
