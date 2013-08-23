@@ -311,7 +311,7 @@ void processMessage(aJsonObject *msg)
     
     if (filter_type == "short")
     {
-      aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "ihold");
+      fmotoritem = aJson.getObjectItem(fmotor, "ihold");
       fparamShort.IHold = fmotoritem->valueint;
       fmotoritem = aJson.getObjectItem(fmotor, "irun");
       fparamShort.IRun = fmotoritem->valueint;
@@ -334,7 +334,7 @@ void processMessage(aJsonObject *msg)
     }
     else if (filter_type == "long")
     {
-      aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "ihold");
+      fmotoritem = aJson.getObjectItem(fmotor, "ihold");
       fparamLong.IHold = fmotoritem->valueint;
       fmotoritem = aJson.getObjectItem(fmotor, "irun");
       fparamLong.IRun = fmotoritem->valueint;
