@@ -299,6 +299,63 @@ void processMessage(aJsonObject *msg)
         gotoSecurePosition(DRV_LONG);
     }
   }
+  
+  // Retreive and set motor parameter
+  aJsonObject *fmotor = aJson.getObjectItem(msg, "fmotor");
+  if (fmotor != NULL)
+  {
+    String filter_type;
+    aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "type");
+    if (fmotoritem->type == aJson_String)
+      filter_type = fmotoritem->valuestring;
+    
+    if (filter_type == "short")
+    {
+      aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "ihold");
+      fparamShort.IHold = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "irun");
+      fparamShort.IRun = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "vmin");
+      fparamShort.VMin = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "vmax");
+      fparamShort.VMax = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "acc");
+      fparamShort.Acc = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "shaft");
+      fparamShort.Shaft = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "sepos");
+      fparamShort.SecPosHi = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "stepmode");
+      fparamShort.StepMode = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "accshape");
+      fparamShort.AccShape = fmotoritem->valueint;
+
+      setMotorParam(DRV_SHORT, &fparamShort);
+    }
+    else if (filter_type == "long")
+    {
+      aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "ihold");
+      fparamLong.IHold = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "irun");
+      fparamLong.IRun = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "vmin");
+      fparamLong.VMin = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "vmax");
+      fparamLong.VMax = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "acc");
+      fparamLong.Acc = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "shaft");
+      fparamLong.Shaft = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "sepos");
+      fparamLong.SecPosHi = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "stepmode");
+      fparamLong.StepMode = fmotoritem->valueint;
+      fmotoritem = aJson.getObjectItem(fmotor, "accshape");
+      fparamLong.AccShape = fmotoritem->valueint;
+
+      setMotorParam(DRV_LONG, &fparamLong);
+    }
+  }
 }
 
 
