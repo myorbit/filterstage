@@ -331,6 +331,56 @@ aJsonObject *createMsgMotorStatus(char* filter_type)
 
 
 /**
+ * @brief Generate JSON message to send stall detection status
+ *
+ * @param filter_type Type of filter: "short" / "long"
+ */
+aJsonObject *createMsgStall(char* filter_type)
+{
+  aJsonObject *root, *sub;
+  root = aJson.createObject();
+  
+  aJson.addItemToObject(root, "fstall", sub = aJson.createObject());
+  aJson.addStringToObject(sub, "type", filter_type);
+
+  if (filter_type == "short")
+  {
+    getFullStatus1(DRV_SHORT, NULL, &fstallShort);  // Get AbsThr and DelThr
+    getFullStatus2(DRV_SHORT, NULL, NULL, &fstallShort);
+    
+    aJson.addNumberToObject(sub, "dc100", fstallLong.DC100);
+    aJson.addNumberToObject(sub, "fs2stallen", fstallLong.FS2StallEn);
+    aJson.addNumberToObject(sub, "pwmjen", fstallLong.PWMJEn);
+    aJson.addNumberToObject(sub, "dc100sten", fstallLong.DC100StEn);
+    aJson.addNumberToObject(sub, "minsamples", fstallLong.MinSamples);
+    aJson.addNumberToObject(sub, "delstallhi", fstallLong.DelStallHi);
+    aJson.addNumberToObject(sub, "delstalllo", fstallLong.DelStallLo);
+    aJson.addNumberToObject(sub, "absstall", fstallLong.AbsStall);
+    aJson.addNumberToObject(sub, "absthr", fstallLong.AbsThr);
+    aJson.addNumberToObject(sub, "delthr", fstallLong.DelThr);
+  }
+  else if (filter_type == "long")
+  {
+    getFullStatus1(DRV_LONG, NULL, &fstallLong);  // Get AbsThr and DelThr
+    getFullStatus2(DRV_LONG, NULL, NULL, &fstallLong); 
+
+    aJson.addNumberToObject(sub, "dc100", fstallLong.DC100);
+    aJson.addNumberToObject(sub, "fs2stallen", fstallLong.FS2StallEn);
+    aJson.addNumberToObject(sub, "pwmjen", fstallLong.PWMJEn);
+    aJson.addNumberToObject(sub, "dc100sten", fstallLong.DC100StEn);
+    aJson.addNumberToObject(sub, "minsamples", fstallLong.MinSamples);
+    aJson.addNumberToObject(sub, "delstallhi", fstallLong.DelStallHi);
+    aJson.addNumberToObject(sub, "delstalllo", fstallLong.DelStallLo);
+    aJson.addNumberToObject(sub, "absstall", fstallLong.AbsStall);
+    aJson.addNumberToObject(sub, "absthr", fstallLong.AbsThr);
+    aJson.addNumberToObject(sub, "delthr", fstallLong.DelThr);
+  }
+  
+  return root;
+}
+
+
+/**
  * @brief Init the TMC223 drivers
  */
 void initDriver( void )
