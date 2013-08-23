@@ -356,6 +356,52 @@ void processMessage(aJsonObject *msg)
       setMotorParam(DRV_LONG, &fparamLong);
     }
   }
+
+  
+  // Retreive and set stall detection parameter
+  aJsonObject *fstall = aJson.getObjectItem(msg, "fstall");
+  if (fstall != NULL)
+  {
+    String filter_type;
+    aJsonObject *fstallitem = aJson.getObjectItem(fstall, "type");
+    if (fstallitem->type == aJson_String)
+      filter_type = fstallitem->valuestring;
+    
+    if (filter_type == "short")
+    {  
+      fstallitem = aJson.getObjectItem(fstall, "dc100");
+      fstallparamShort.DC100En = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "fs2stallen");
+      fstallparamShort.FS2StallEN = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "minsamples");
+      fstallparamShort.MinSamples = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "delthr");
+      fstallparamShort.DelThr = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "absthr");
+      fstallparamShort.AbsThr = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "pwmjen");
+      fstallparamShort.PWMJEn = fstallitem->valueint;
+      
+      setStallParam(DRV_SHORT, &fstallparamShort);
+    }
+    else if (filter_type == "long")
+    {
+      fstallitem = aJson.getObjectItem(fstall, "dc100");
+      fstallparamLong.DC100En = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "fs2stallen");
+      fstallparamLong.FS2StallEN = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "minsamples");
+      fstallparamLong.MinSamples = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "delthr");
+      fstallparamLong.DelThr = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "absthr");
+      fstallparamLong.AbsThr = fstallitem->valueint;
+      fstallitem = aJson.getObjectItem(fstall, "pwmjen");
+      fstallparamLong.PWMJEn = fstallitem->valueint;
+      
+      setStallParam(DRV_LONG, &fstallparamLong);
+    }
+  }
 }
 
 
