@@ -463,42 +463,33 @@ aJsonObject *createMsgStall(char* filter_type)
 {
   aJsonObject *root, *sub;
   root = aJson.createObject();
+  tmc223stall *pfstall;
   
-  aJson.addItemToObject(root, "fstall", sub = aJson.createObject());
-  aJson.addStringToObject(sub, "type", filter_type);
-
   if (filter_type == "short")
   {
-    getFullStatus1(DRV_SHORT, NULL, &fstallShort);  // Get AbsThr and DelThr
-    getFullStatus2(DRV_SHORT, NULL, NULL, &fstallShort);
-    
-    aJson.addNumberToObject(sub, "dc100", fstallShort.DC100);
-    aJson.addNumberToObject(sub, "fs2stallen", fstallShort.FS2StallEn);
-    aJson.addNumberToObject(sub, "pwmjen", fstallShort.PWMJEn);
-    aJson.addNumberToObject(sub, "dc100sten", fstallShort.DC100StEn);
-    aJson.addNumberToObject(sub, "minsamples", fstallShort.MinSamples);
-    aJson.addNumberToObject(sub, "delstallhi", fstallShort.DelStallHi);
-    aJson.addNumberToObject(sub, "delstalllo", fstallShort.DelStallLo);
-    aJson.addNumberToObject(sub, "absstall", fstallShort.AbsStall);
-    aJson.addNumberToObject(sub, "absthr", fstallShort.AbsThr);
-    aJson.addNumberToObject(sub, "delthr", fstallShort.DelThr);
+    pfstall = &fstallShort;
+    getFullStatus1(DRV_SHORT, NULL, pfstall);  // Get AbsThr and DelThr
+    getFullStatus2(DRV_SHORT, NULL, NULL, pfstall);
   }
   else if (filter_type == "long")
   {
-    getFullStatus1(DRV_LONG, NULL, &fstallLong);  // Get AbsThr and DelThr
-    getFullStatus2(DRV_LONG, NULL, NULL, &fstallLong); 
-
-    aJson.addNumberToObject(sub, "dc100", fstallLong.DC100);
-    aJson.addNumberToObject(sub, "fs2stallen", fstallLong.FS2StallEn);
-    aJson.addNumberToObject(sub, "pwmjen", fstallLong.PWMJEn);
-    aJson.addNumberToObject(sub, "dc100sten", fstallLong.DC100StEn);
-    aJson.addNumberToObject(sub, "minsamples", fstallLong.MinSamples);
-    aJson.addNumberToObject(sub, "delstallhi", fstallLong.DelStallHi);
-    aJson.addNumberToObject(sub, "delstalllo", fstallLong.DelStallLo);
-    aJson.addNumberToObject(sub, "absstall", fstallLong.AbsStall);
-    aJson.addNumberToObject(sub, "absthr", fstallLong.AbsThr);
-    aJson.addNumberToObject(sub, "delthr", fstallLong.DelThr);
+    pfstall = &fstallLong;
+    getFullStatus1(DRV_LONG, NULL, pfstall);  // Get AbsThr and DelThr
+    getFullStatus2(DRV_LONG, NULL, NULL, pfstall);
   }
+
+  aJson.addItemToObject(root, "fstall", sub = aJson.createObject());
+  aJson.addStringToObject(sub, "type", filter_type);
+  aJson.addNumberToObject(sub, "dc100", pfstall->DC100);
+  aJson.addNumberToObject(sub, "fs2stallen", pfstall->FS2StallEn);
+  aJson.addNumberToObject(sub, "pwmjen", pfstall->PWMJEn);
+  aJson.addNumberToObject(sub, "dc100sten", pfstall->DC100StEn);
+  aJson.addNumberToObject(sub, "minsamples", pfstall->MinSamples);
+  aJson.addNumberToObject(sub, "delstallhi", pfstall->DelStallHi);
+  aJson.addNumberToObject(sub, "delstalllo", pfstall->DelStallLo);
+  aJson.addNumberToObject(sub, "absstall", pfstall->AbsStall);
+  aJson.addNumberToObject(sub, "absthr", pfstall->AbsThr);
+  aJson.addNumberToObject(sub, "delthr", pfstall->DelThr);
   
   return root;
 }
