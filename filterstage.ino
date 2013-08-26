@@ -577,6 +577,22 @@ void initDriver( void )
   runInit(DRV_LONG, 0x0, 0x1, actualPosLong-5500, actualPosLong-231);
 
   // Send initial status information via JSON
+  delay(2500);  // Wait until init is completed
+  
+  aJsonObject *msg = createMsgMotorStatus("short");
+  aJson.print(msg, &serial_stream);
+  Serial.println(); // Add newline.
+  msg = createMsgMotorStatus("long");
+  aJson.print(msg, &serial_stream);
+  Serial.println();
+
+  msg = createMsgStall("short");
+  aJson.print(msg, &serial_stream);
+  Serial.println();
+  msg = createMsgStall("long");
+  aJson.print(msg, &serial_stream);
+  Serial.println();
+  aJson.deleteItem(msg);
 }
 
 
