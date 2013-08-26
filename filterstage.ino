@@ -299,6 +299,31 @@ void processMessage(aJsonObject *msg)
         gotoSecurePosition(DRV_LONG);
     }
   }
+
+
+  // Get Motor Status
+  aJsonObject *fstat = aJson.getObjectItem(msg, "fstat");
+  if (fstat != NULL)
+  {
+    aJsonObject *fstatitem = aJson.getObjectItem(fstat, "type");
+    if (fstatitem->type == aJson_String)
+      filter_type = fstatitem->valuestring;
+      
+    aJsonObject *msg;
+    
+    if (filter_type == "short")
+    {
+      msg = createMsgMotorStatus("short");
+    }
+    else if (filter_type == "long")
+    {
+      msg = createMsgMotorStatus("long");
+    }
+    aJson.print(msg, &serial_stream);
+    Serial.println(); // Add newline.
+    aJson.deleteItem(msg);
+  }
+
   
   // Retreive and set motor parameter
   aJsonObject *fmotor = aJson.getObjectItem(msg, "fmotor");
