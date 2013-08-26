@@ -227,12 +227,13 @@ void loop()
  */
 void processMessage(aJsonObject *msg)
 {
+  String filter_type;
+  byte i2c_adr;
   
   // Positioning of filters; e.g. {"fpos":{"type":"short","pos":200}}
   aJsonObject *fpos = aJson.getObjectItem(msg, "fpos");
   if (fpos != NULL)
   {
-    String filter_type;
     int pos_value, all_ok = 0;
     aJsonObject *fpositem = aJson.getObjectItem(fpos, "type");
     if (fpositem->type == aJson_String)
@@ -263,7 +264,6 @@ void processMessage(aJsonObject *msg)
   aJsonObject *fdrive = aJson.getObjectItem(msg, "fdrive");
   if (fdrive != NULL)
   {
-    String filter_type;
     aJsonObject *fdriveitem = aJson.getObjectItem(fdrive, "type");
     if (fdriveitem->type == aJson_String)
       filter_type = fdriveitem->valuestring;
@@ -304,57 +304,42 @@ void processMessage(aJsonObject *msg)
   aJsonObject *fmotor = aJson.getObjectItem(msg, "fmotor");
   if (fmotor != NULL)
   {
-    String filter_type;
+    tmc223param *pparam;  // Pointer to motor parameter
     aJsonObject *fmotoritem = aJson.getObjectItem(fmotor, "type");
     if (fmotoritem->type == aJson_String)
       filter_type = fmotoritem->valuestring;
     
     if (filter_type == "short")
     {
-      fmotoritem = aJson.getObjectItem(fmotor, "ihold");
-      fparamShort.IHold = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "irun");
-      fparamShort.IRun = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "vmin");
-      fparamShort.VMin = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "vmax");
-      fparamShort.VMax = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "acc");
-      fparamShort.Acc = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "shaft");
-      fparamShort.Shaft = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "sepos");
-      fparamShort.SecPosHi = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "stepmode");
-      fparamShort.StepMode = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "accshape");
-      fparamShort.AccShape = fmotoritem->valueint;
-
-      setMotorParam(DRV_SHORT, &fparamShort);
+      i2c_adr = DRV_SHORT;
+      pparam = &fparamShort;
     }
     else if (filter_type == "long")
     {
-      fmotoritem = aJson.getObjectItem(fmotor, "ihold");
-      fparamLong.IHold = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "irun");
-      fparamLong.IRun = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "vmin");
-      fparamLong.VMin = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "vmax");
-      fparamLong.VMax = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "acc");
-      fparamLong.Acc = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "shaft");
-      fparamLong.Shaft = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "sepos");
-      fparamLong.SecPosHi = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "stepmode");
-      fparamLong.StepMode = fmotoritem->valueint;
-      fmotoritem = aJson.getObjectItem(fmotor, "accshape");
-      fparamLong.AccShape = fmotoritem->valueint;
-
-      setMotorParam(DRV_LONG, &fparamLong);
+      i2c_adr = DRV_LONG;
+      pparam = &fparamLong;
     }
+
+    fmotoritem = aJson.getObjectItem(fmotor, "ihold");
+    pparam->IHold = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "irun");
+    pparam->IRun = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "vmin");
+    pparam->VMin = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "vmax");
+    pparam->VMax = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "acc");
+    pparam->Acc = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "shaft");
+    pparam->Shaft = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "sepos");
+    pparam->SecPosHi = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "stepmode");
+    pparam->StepMode = fmotoritem->valueint;
+    fmotoritem = aJson.getObjectItem(fmotor, "accshape");
+    pparam->AccShape = fmotoritem->valueint;
+
+    setMotorParam(i2c_adr, pparam);
   }
 
   
@@ -362,45 +347,36 @@ void processMessage(aJsonObject *msg)
   aJsonObject *fstall = aJson.getObjectItem(msg, "fstall");
   if (fstall != NULL)
   {
-    String filter_type;
+    tmc223stallparam *pstallparam;  // Pointer to stall parameter
     aJsonObject *fstallitem = aJson.getObjectItem(fstall, "type");
     if (fstallitem->type == aJson_String)
       filter_type = fstallitem->valuestring;
     
     if (filter_type == "short")
-    {  
-      fstallitem = aJson.getObjectItem(fstall, "dc100");
-      fstallparamShort.DC100En = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "fs2stallen");
-      fstallparamShort.FS2StallEN = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "minsamples");
-      fstallparamShort.MinSamples = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "delthr");
-      fstallparamShort.DelThr = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "absthr");
-      fstallparamShort.AbsThr = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "pwmjen");
-      fstallparamShort.PWMJEn = fstallitem->valueint;
-      
-      setStallParam(DRV_SHORT, &fstallparamShort);
+    {
+      i2c_adr = DRV_SHORT;
+      pstallparam = &fstallparamShort;
     }
     else if (filter_type == "long")
     {
-      fstallitem = aJson.getObjectItem(fstall, "dc100");
-      fstallparamLong.DC100En = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "fs2stallen");
-      fstallparamLong.FS2StallEN = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "minsamples");
-      fstallparamLong.MinSamples = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "delthr");
-      fstallparamLong.DelThr = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "absthr");
-      fstallparamLong.AbsThr = fstallitem->valueint;
-      fstallitem = aJson.getObjectItem(fstall, "pwmjen");
-      fstallparamLong.PWMJEn = fstallitem->valueint;
-      
-      setStallParam(DRV_LONG, &fstallparamLong);
+      i2c_adr = DRV_LONG;
+      pstallparam = &fstallparamLong;
     }
+
+    fstallitem = aJson.getObjectItem(fstall, "dc100");
+    pstallparam->DC100En = fstallitem->valueint;
+    fstallitem = aJson.getObjectItem(fstall, "fs2stallen");
+    pstallparam->FS2StallEN = fstallitem->valueint;
+    fstallitem = aJson.getObjectItem(fstall, "minsamples");
+    pstallparam->MinSamples = fstallitem->valueint;
+    fstallitem = aJson.getObjectItem(fstall, "delthr");
+    pstallparam->DelThr = fstallitem->valueint;
+    fstallitem = aJson.getObjectItem(fstall, "absthr");
+    pstallparam->AbsThr = fstallitem->valueint;
+    fstallitem = aJson.getObjectItem(fstall, "pwmjen");
+    pstallparam->PWMJEn = fstallitem->valueint;
+    
+    setStallParam(i2c_adr, pstallparam);
   }
 }
 
