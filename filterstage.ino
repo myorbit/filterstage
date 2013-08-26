@@ -414,61 +414,41 @@ aJsonObject *createMsgMotorStatus(char* filter_type)
 {
   aJsonObject *root, *msg;
   root = aJson.createObject();
+  tmc223status *pfstat;  // Pointer to status parameter
 
   if (filter_type == "short")
   {
-    getFullStatus1(DRV_SHORT, &fstatShort, NULL);
-    
-    aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
-    aJson.addStringToObject(msg, "type", filter_type);
-    aJson.addNumberToObject(msg, "irun", fstatShort.IRun);
-    aJson.addNumberToObject(msg, "ihold", fstatShort.IHold);
-    aJson.addNumberToObject(msg, "vmax", fstatShort.VMax);
-    aJson.addNumberToObject(msg, "vmin", fstatShort.VMin);
-    aJson.addNumberToObject(msg, "acc", fstatShort.Acc);
-    aJson.addNumberToObject(msg, "shaft", fstatShort.Shaft);
-    aJson.addNumberToObject(msg, "stepmode", fstatShort.StepMode);
-    aJson.addNumberToObject(msg, "accshape", fstatShort.AccShape);
-    aJson.addNumberToObject(msg, "tinfo", fstatShort.TInfo);
-    aJson.addNumberToObject(msg, "tw", fstatShort.TW);
-    aJson.addNumberToObject(msg, "tsd", fstatShort.TSD);
-    aJson.addNumberToObject(msg, "uv2", fstatShort.UV2);
-    aJson.addNumberToObject(msg, "eldef", fstatShort.ElDef);
-    aJson.addNumberToObject(msg, "steploss", fstatShort.SteppLoss);
-    aJson.addNumberToObject(msg, "vddreset", fstatShort.VddReset);
-    aJson.addNumberToObject(msg, "cpfail", fstatShort.CPFail);
-    aJson.addNumberToObject(msg, "ovc2", fstatShort.OVC2);
-    aJson.addNumberToObject(msg, "ovc1", fstatShort.OVC1);
-    aJson.addNumberToObject(msg, "esw", fstatShort.ESW);
-    aJson.addNumberToObject(msg, "motion", fstatShort.Motion);
+    pfstat = &fstatShort;
+    getFullStatus1(DRV_SHORT, pfstat, NULL);
   }
   else if (filter_type == "long")
   {
-    getFullStatus1(DRV_LONG, &fstatLong, NULL);
-
-    aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
-    aJson.addStringToObject(msg, "type", filter_type);
-    aJson.addNumberToObject(msg, "irun", fstatLong.IRun);
-    aJson.addNumberToObject(msg, "ihold", fstatLong.IHold);
-    aJson.addNumberToObject(msg, "vmax", fstatLong.VMax);
-    aJson.addNumberToObject(msg, "vmin", fstatLong.VMin);
-    aJson.addNumberToObject(msg, "acc", fstatLong.Acc);
-    aJson.addNumberToObject(msg, "shaft", fstatLong.Shaft);
-    aJson.addNumberToObject(msg, "stepmode", fstatLong.StepMode);
-    aJson.addNumberToObject(msg, "accshape", fstatLong.AccShape);
-    aJson.addNumberToObject(msg, "tinfo", fstatLong.TInfo);
-    aJson.addNumberToObject(msg, "tw", fstatLong.TW);
-    aJson.addNumberToObject(msg, "tsd", fstatLong.TSD);
-    aJson.addNumberToObject(msg, "uv2", fstatLong.UV2);
-    aJson.addNumberToObject(msg, "eldef", fstatLong.ElDef);
-    aJson.addNumberToObject(msg, "steploss", fstatLong.SteppLoss);
-    aJson.addNumberToObject(msg, "vddreset", fstatLong.VddReset);
-    aJson.addNumberToObject(msg, "cpfail", fstatLong.CPFail);
-    aJson.addNumberToObject(msg, "ovc2", fstatLong.OVC2);
-    aJson.addNumberToObject(msg, "ovc1", fstatLong.OVC1);
-    aJson.addNumberToObject(msg, "esw", fstatLong.ESW);
-    aJson.addNumberToObject(msg, "motion", fstatLong.Motion);
+    pfstat = &fstatLong;
+    getFullStatus1(DRV_LONG, pfstat, NULL);
   }
+    
+  aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
+  aJson.addStringToObject(msg, "type", filter_type);
+  aJson.addNumberToObject(msg, "irun", pfstat->IRun);
+  aJson.addNumberToObject(msg, "ihold", pfstat->IHold);
+  aJson.addNumberToObject(msg, "vmax", pfstat->VMax);
+  aJson.addNumberToObject(msg, "vmin", pfstat->VMin);
+  aJson.addNumberToObject(msg, "acc", pfstat->Acc);
+  aJson.addNumberToObject(msg, "shaft", pfstat->Shaft);
+  aJson.addNumberToObject(msg, "stepmode", pfstat->StepMode);
+  aJson.addNumberToObject(msg, "accshape", pfstat->AccShape);
+  aJson.addNumberToObject(msg, "tinfo", pfstat->TInfo);
+  aJson.addNumberToObject(msg, "tw", pfstat->TW);
+  aJson.addNumberToObject(msg, "tsd", pfstat->TSD);
+  aJson.addNumberToObject(msg, "uv2", pfstat->UV2);
+  aJson.addNumberToObject(msg, "eldef", pfstat->ElDef);
+  aJson.addNumberToObject(msg, "steploss", pfstat->SteppLoss);
+  aJson.addNumberToObject(msg, "vddreset", pfstat->VddReset);
+  aJson.addNumberToObject(msg, "cpfail", pfstat->CPFail);
+  aJson.addNumberToObject(msg, "ovc2", pfstat->OVC2);
+  aJson.addNumberToObject(msg, "ovc1", pfstat->OVC1);
+  aJson.addNumberToObject(msg, "esw", pfstat->ESW);
+  aJson.addNumberToObject(msg, "motion", pfstat->Motion);
 
   return root;
 }
