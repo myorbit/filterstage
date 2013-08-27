@@ -100,8 +100,8 @@ typedef struct tmc223stall
   unsigned char DelStallHi: 1;
   unsigned char DelStallLo: 1;
   unsigned char AbsStall: 1;
-  unsigned char AbsThr: 4;
   unsigned char DelThr: 4;
+  unsigned char AbsThr: 4;
 } tmc223stall;
 
 
