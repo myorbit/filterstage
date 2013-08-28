@@ -385,6 +385,11 @@ void processMessage(aJsonObject *msg)
     pparam->AccShape = fmotoritem->valueint;
 
     setMotorParam(i2c_adr, pparam);
+    
+    aJsonObject *msg = createMsgMotorStatus(filter_type);
+    aJson.print(msg, &serial_stream);
+    Serial.println();
+    aJson.deleteItem(msg);
   }
 
   
@@ -436,25 +441,26 @@ void processMessage(aJsonObject *msg)
  *
  * @param filter_type Type of optical filter: "short" / "long"
  */
-aJsonObject *createMsgMotorStatus(char* filter_type)
+aJsonObject *createMsgMotorStatus(String filter_type)
 {
+  tmc223status *pfstat;  // Pointer to status parameter
   aJsonObject *root, *msg;
   root = aJson.createObject();
-  tmc223status *pfstat;  // Pointer to status parameter
+  aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
 
   if (filter_type == "short")
   {
     pfstat = &fstatShort;
     getFullStatus1(DRV_SHORT, pfstat, NULL);
+    aJson.addStringToObject(msg, "type", "short");
   }
   else if (filter_type == "long")
   {
     pfstat = &fstatLong;
     getFullStatus1(DRV_LONG, pfstat, NULL);
+    aJson.addStringToObject(msg, "type", "long");
   }
-    
-  aJson.addItemToObject(root, "fstat", msg = aJson.createObject());
-  aJson.addStringToObject(msg, "type", filter_type);
+
   aJson.addNumberToObject(msg, "irun", pfstat->IRun);
   aJson.addNumberToObject(msg, "ihold", pfstat->IHold);
   aJson.addNumberToObject(msg, "vmax", pfstat->VMax);
