@@ -402,6 +402,11 @@ void processMessage(aJsonObject *msg)
     pstallparam->PWMJEn = fstallitem->valueint;
     
     setStallParam(i2c_adr, pstallparam);
+    
+    aJsonObject *msg = createMsgStall(filter_type);
+    aJson.print(msg, &serial_stream);
+    Serial.println();
+    aJson.deleteItem(msg);
   }
 }
 
@@ -460,27 +465,28 @@ aJsonObject *createMsgMotorStatus(char* filter_type)
  *
  * @param filter_type Type of filter: "short" / "long"
  */
-aJsonObject *createMsgStall(char* filter_type)
+aJsonObject *createMsgStall(String filter_type)
 {
+  tmc223stall *pfstall;
   aJsonObject *root, *sub;
   root = aJson.createObject();
-  tmc223stall *pfstall;
+  aJson.addItemToObject(root, "fstall", sub = aJson.createObject());
   
   if (filter_type == "short")
   {
     pfstall = &fstallShort;
     getFullStatus1(DRV_SHORT, NULL, pfstall);  // Get AbsThr and DelThr
     getFullStatus2(DRV_SHORT, NULL, NULL, pfstall);
+    aJson.addStringToObject(sub, "type", "short");
   }
   else if (filter_type == "long")
   {
     pfstall = &fstallLong;
     getFullStatus1(DRV_LONG, NULL, pfstall);  // Get AbsThr and DelThr
     getFullStatus2(DRV_LONG, NULL, NULL, pfstall);
+    aJson.addStringToObject(sub, "type", "long");
   }
 
-  aJson.addItemToObject(root, "fstall", sub = aJson.createObject());
-  aJson.addStringToObject(sub, "type", filter_type);
   aJson.addNumberToObject(sub, "dc100", pfstall->DC100);
   aJson.addNumberToObject(sub, "fs2stallen", pfstall->FS2StallEn);
   aJson.addNumberToObject(sub, "pwmjen", pfstall->PWMJEn);
