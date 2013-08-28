@@ -193,8 +193,28 @@ void setup()
     Serial.println("{\"fshift\":{\"type\":\"long\",\"ready\":\"no\"}}");
   }
  
-  if (drv_count == 2) {
+  if (drv_count == 2)
+  {
     initDriver();
+      
+    // Send initial status information via JSON
+    delay(3000);  // Wait until init is completed
+    
+    aJsonObject *msg = createMsgMotorStatus("short");
+    aJson.print(msg, &serial_stream);
+    Serial.println(); // Add newline.
+    msg = createMsgMotorStatus("long");
+    aJson.print(msg, &serial_stream);
+    Serial.println();
+  
+    msg = createMsgStall("short");
+    aJson.print(msg, &serial_stream);
+    Serial.println();
+    msg = createMsgStall("long");
+    aJson.print(msg, &serial_stream);
+    Serial.println();
+    aJson.deleteItem(msg);
+  
     Serial.println("{\"status\":\"ready\"}");
   }
 }
