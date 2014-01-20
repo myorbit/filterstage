@@ -584,13 +584,90 @@ void initDriver( void )
   setMotorParam(DRV_LONG, &fparamLong);
   
   // Actual position is unknown. Hence, do init drive
-  // Drive not with maximum velocity!
-  runInit(DRV_SHORT, 0x0, 0x1, actualPosShort-5500, actualPosShort-231);
-  runInit(DRV_LONG, 0x0, 0x1, actualPosLong-5500, actualPosLong-231);
-
-  // Send initial status information via JSON
-  delay(3000);  // Wait until init is completed
+  // Do not drive with maximum velocity!
+  // Do NOT use the runInit() function! This will lead to an unpredictable
+  // change in direction during referencing.
+  resetPosition(DRV_SHORT);
+  resetPosition(DRV_LONG);
+  delay(50);  // Wait until init is completed
   
+  // Set motor parameter to perform reference search
+  fparamShort.IHold = 0x2;
+  fparamShort.IRun =  0xD;
+  fparamShort.VMin =  0x1;
+  fparamShort.VMax =  0x2;
+  fparamShort.Acc =   0x1;
+  setMotorParam(DRV_SHORT, &fparamShort);
+  
+  fparamLong.IHold = 0x2;
+  fparamLong.IRun =  0xD;
+  fparamLong.VMin =  0x1;
+  fparamLong.VMax =  0x2;
+  fparamLong.Acc =   0x1;
+  setMotorParam(DRV_LONG, &fparamLong);
+
+  /** Perform actual reference search */
+
+  // Referencing LONG pass
+  setPosition(DRV_LONG, -5500);
+  while(fstatLong.ESW < 1)
+  {
+    getFullStatus1(DRV_LONG, &fstatLong, NULL);
+  }
+  hardStop(DRV_LONG);
+  resetPosition(DRV_LONG);
+
+  // Drive back to compensate if carriage is already located at ref position
+  setPosition(DRV_LONG, +300);
+  delay(450);
+  getFullStatus1(DRV_LONG, &fstatLong, NULL);
+  setPosition(DRV_LONG, -50);
+  while(fstatLong.ESW < 1)
+  {
+    getFullStatus1(DRV_LONG, &fstatLong, NULL);
+  }
+  hardStop(DRV_LONG);
+  resetPosition(DRV_LONG);
+  
+  // Referencing SHORT pass
+  setPosition(DRV_SHORT, -5500);
+  while(fstatShort.ESW < 1)
+  {
+    getFullStatus1(DRV_SHORT, &fstatShort, NULL);
+  }
+  hardStop(DRV_SHORT);
+  resetPosition(DRV_SHORT);
+  
+  // Drive back to compensate if carriage is already located at ref position
+  setPosition(DRV_SHORT, +300);
+  delay(450);
+  getFullStatus1(DRV_SHORT, &fstatShort, NULL);
+  setPosition(DRV_SHORT, -50);
+  while(fstatShort.ESW < 1)
+  {
+    getFullStatus1(DRV_SHORT, &fstatShort, NULL);
+  }
+  hardStop(DRV_SHORT);
+  resetPosition(DRV_SHORT);
+  
+  // Reset motor parameter after reference search
+  fparamLong.IHold = 0x7;
+  fparamLong.IRun =  0xF;
+  fparamLong.VMin =  0x3;
+  fparamLong.VMax =  0xE;
+  fparamLong.Acc =   0xA;
+  setMotorParam(DRV_LONG, &fparamLong);
+  
+  fparamShort.IHold = 0x7;
+  fparamShort.IRun =  0xF;
+  fparamShort.VMin =  0x3;
+  fparamShort.VMax =  0xE;
+  fparamShort.Acc =   0xA;
+  setMotorParam(DRV_SHORT, &fparamShort);
+
+  delay(100);  // wait a while
+  
+  // Send initial status information via JSON  
   aJsonObject *msg = createMsgMotorStatus("short");
   aJson.print(msg, &serial_stream);
   Serial.println(); // Add newline.
