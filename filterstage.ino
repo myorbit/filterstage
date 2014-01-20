@@ -21,7 +21,7 @@ e.g. {"fpos":{"type":"short","pos":230}}
 #include <aJSON.h>
 
 
-#define _DEBUG    // for debugging purposes; uncomment if not used
+//#define _DEBUG    // for debugging purposes; uncomment if not used
 
 // I2C address of the filter drivers
 #define DRV_ALL   0x00  // address works for ALL drivers (broadcast address)
@@ -193,7 +193,7 @@ void setup()
     Serial.println("{\"fshift\":{\"type\":\"long\",\"ready\":\"no\"}}");
   }
  
-  if (drv_count == 2)
+  if (drv_count == 0)
   {
     initDriver();
       
@@ -267,7 +267,7 @@ void processMessage(aJsonObject *msg)
       pos_value = fpositem->valueint;
       all_ok++;
     }
-    if (all_ok == 2)
+    if (all_ok == 2)  // there was no protocol error
     {
       if (filter_type == "short")
       {
@@ -549,11 +549,11 @@ void initDriver( void )
   #endif
   
   // Define motor parameter...
-  fparamShort.IHold = 0x0;
-  fparamShort.IRun =  0xE;
+  fparamShort.IHold = 0x7;
+  fparamShort.IRun =  0xF;
   fparamShort.VMin =  0x1;
   fparamShort.VMax =  0x9;
-  fparamShort.Acc =   0x9;
+  fparamShort.Acc =   0x5;
   fparamShort.Shaft = 0x0;  // clockwise
   fparamShort.SecPosHi = 0x4;  // value 0x400 ignores secure position!
   fparamShort.SecPosLo = 0x00;
@@ -848,6 +848,11 @@ void setStallParam(byte i2c_adr, struct tmc223stallparam *tmc223stallparam)
  */
 void runInit(byte i2c_adr, unsigned char Vmin, unsigned char Vmax, int Position1, int Position2)
 {
+  #ifdef _DEBUG
+  Serial.println(Position1);
+  Serial.println(Position2);
+  #endif
+  
   // Send command byte and data to TMC223
   Wire.beginTransmission(i2c_adr);  // write device address
   Wire.write(0x88);  // RunInit command byte
