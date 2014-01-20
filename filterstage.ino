@@ -193,7 +193,7 @@ void setup()
     Serial.println("{\"fshift\":{\"type\":\"long\",\"ready\":\"no\"}}");
   }
  
-  if (drv_count == 0)
+  if (drv_count == 2)
   {
     initDriver();
       
@@ -249,6 +249,7 @@ void processMessage(aJsonObject *msg)
 {
   String filter_type;
   byte i2c_adr;
+  int maxPosValue = 5100;  // indcates the maximum value where the filter carriage can drive to
   
   // Positioning of filters; e.g. {"fpos":{"type":"short","pos":200}}
   aJsonObject *fpos = aJson.getObjectItem(msg, "fpos");
@@ -265,6 +266,13 @@ void processMessage(aJsonObject *msg)
     if (fpositem->type == aJson_Int)
     {
       pos_value = fpositem->valueint;
+
+      // Restrict maximum position value
+      if (pos_value > maxPosValue)
+        pos_value = maxPosValue;
+      else if (pos_value < 0)
+        pos_value = 0;
+
       all_ok++;
     }
     if (all_ok == 2)  // there was no protocol error
