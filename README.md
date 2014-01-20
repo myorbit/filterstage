@@ -17,6 +17,8 @@ To drive a filter to a certain position type
 with `<pass>` = "short" or "long"
 and `<x>` = [-32768:32767]
 
+**Note** `<x>` is now limited to a maximum value of 5100! (This is due to the mechanical end stop.)
+
 Example: `{"fpos":{"type":"short","pos":230}}`
 
 Other possible commands are:
@@ -31,6 +33,7 @@ Other possible commands are:
 
 `{"fstall":{"type":"short","dc100":0, ... }}`   set stall detection parameter
 
+**Note** Changing motor parameter, reference position, etc. is not recommended!
 
 The controller can send back the motor status or stall detection status:
 
