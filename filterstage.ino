@@ -664,8 +664,18 @@ void initDriver( void )
   fparamShort.VMax =  0xE;
   fparamShort.Acc =   0xA;
   setMotorParam(DRV_SHORT, &fparamShort);
+  
+  delay(10);
+  
+  // Compensate for full-step position after reference search
+  setPosition(DRV_SHORT, 1);
+  delay(5);
+  setPosition(DRV_SHORT, 0);
+  setPosition(DRV_SHORT, 1);
+  delay(5);
+  setPosition(DRV_SHORT, 0);
 
-  delay(100);  // wait a while
+  delay(10);  // wait a while
   
   // Send initial status information via JSON  
   aJsonObject *msg = createMsgMotorStatus("short");
