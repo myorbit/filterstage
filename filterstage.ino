@@ -22,6 +22,7 @@ e.g. {"fpos":{"type":"short","pos":230}}
 
 
 //#define _DEBUG    // for debugging purposes; uncomment if not used
+//#define _STALL  // uncomment if stall detection should be used
 
 // I2C address of the filter drivers
 #define DRV_ALL   0x00  // address works for ALL drivers (broadcast address)
@@ -83,6 +84,7 @@ typedef struct tmc223param
 } tmc223param;
 
 
+#ifdef _STALL
 /**
  * A structure to represent TMC223 Stall Detection Status values
  * Use together with GetFullStatus2() function
@@ -103,7 +105,7 @@ typedef struct tmc223stall
   unsigned char DelThr: 4;
   unsigned char AbsThr: 4;
 } tmc223stall;
-
+#endif
 
 /**
  * A structure to represent TMC223 Stall Detection Paramater
@@ -143,9 +145,11 @@ tmc223param fparamLong;
 tmc223stallparam fstallparamShort;
 tmc223stallparam fstallparamLong;
 
+#ifdef _STALL
 // Declare TMC223 stall detection status structs
 tmc223stall fstallShort;
 tmc223stall fstallLong;
+#endif
 
 
 static volatile unsigned char rxBuffer[9];  // I2C receive buffer
@@ -206,13 +210,16 @@ void setup()
     msg = createMsgMotorStatus("long");
     aJson.print(msg, &serial_stream);
     Serial.println();
-  
+
+    #ifdef _STALL
     msg = createMsgStall("short");
     aJson.print(msg, &serial_stream);
     Serial.println();
     msg = createMsgStall("long");
     aJson.print(msg, &serial_stream);
     Serial.println();
+    #endif
+    
     aJson.deleteItem(msg);
   
     Serial.println("{\"status\":\"ready\"}");
@@ -400,7 +407,7 @@ void processMessage(aJsonObject *msg)
     aJson.deleteItem(msg);
   }
 
-  
+  #ifdef _STALL
   // Retreive and set stall detection parameter
   aJsonObject *fstall = aJson.getObjectItem(msg, "fstall");
   if (fstall != NULL)
@@ -441,6 +448,7 @@ void processMessage(aJsonObject *msg)
     Serial.println();
     aJson.deleteItem(msg);
   }
+  #endif
 }
 
 
@@ -494,6 +502,7 @@ aJsonObject *createMsgMotorStatus(String filter_type)
 }
 
 
+#ifdef _STALL
 /**
  * @brief Generate JSON message to send stall detection status
  *
@@ -534,6 +543,7 @@ aJsonObject *createMsgStall(String filter_type)
   
   return root;
 }
+#endif
 
 
 /**
@@ -685,12 +695,15 @@ void initDriver( void )
   aJson.print(msg, &serial_stream);
   Serial.println();
 
+  #ifdef _STALL
   msg = createMsgStall("short");
   aJson.print(msg, &serial_stream);
   Serial.println();
   msg = createMsgStall("long");
   aJson.print(msg, &serial_stream);
   Serial.println();
+  #endif
+  
   aJson.deleteItem(msg);
 }
 
