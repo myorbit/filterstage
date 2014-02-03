@@ -22,7 +22,8 @@ e.g. {"fpos":{"type":"short","pos":230}}
 
 
 //#define _DEBUG    // for debugging purposes; uncomment if not used
-//#define _STALL  // uncomment if stall detection should be used
+//#define _STALL    // uncomment if stall detection should be used
+//#define _EXTSTAT  // uncomment to print extended motor status messages at start-up (not working with UNO boards!)
 
 // I2C address of the filter drivers
 #define DRV_ALL   0x00  // address works for ALL drivers (broadcast address)
@@ -202,8 +203,9 @@ void setup()
     initDriver();
       
     // Send initial status information via JSON
-    delay(3000);  // Wait until init is completed
+    delay(2000);  // Wait until init is completed
     
+    #ifdef _EXTSTAT
     aJsonObject *msg = createMsgMotorStatus("short");
     aJson.print(msg, &serial_stream);
     Serial.println(); // Add newline.
@@ -221,6 +223,7 @@ void setup()
     #endif
     
     aJson.deleteItem(msg);
+    #endif
   
     Serial.println("{\"status\":\"ready\"}");
   }
@@ -687,6 +690,7 @@ void initDriver( void )
 
   delay(10);  // wait a while
   
+  #ifdef _EXTSTAT
   // Send initial status information via JSON  
   aJsonObject *msg = createMsgMotorStatus("short");
   aJson.print(msg, &serial_stream);
@@ -705,6 +709,7 @@ void initDriver( void )
   #endif
   
   aJson.deleteItem(msg);
+  #endif
 }
 
 
