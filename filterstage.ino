@@ -576,7 +576,7 @@ void initDriver( void )
   fparamShort.VMax =  0x9;
   fparamShort.Acc =   0x5;
   fparamShort.Shaft = 0x0;  // clockwise
-  fparamShort.SecPosHi = 0x4;  // value 0x400 ignores secure position!
+  fparamShort.SecPosHi = 0x0;   // set to zero
   fparamShort.SecPosLo = 0x00;
   fparamShort.StepMode = 0x03;  // 1/16 micro-stepping
   fparamShort.AccShape = 0;     // acceleration with Acc parameter
@@ -587,7 +587,7 @@ void initDriver( void )
   fparamLong.VMax =  0x9;
   fparamLong.Acc =   0x5;
   fparamLong.Shaft = 0x1;  // counter-clockwise
-  fparamLong.SecPosHi = 0x4;  // value 0x400 ignores secure position!
+  fparamLong.SecPosHi = 0x0;   // set to zero
   fparamLong.SecPosLo = 0x00;
   fparamLong.StepMode = 0x03;  // 1/16 micro-stepping
   fparamLong.AccShape = 0;     // acceleration with Acc parameter
