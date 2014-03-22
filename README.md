@@ -29,6 +29,15 @@ Other possible commands are:
 `{"fdrive":{"type":"short","action":"resetdefault"}}`   overwrite RAM with OTP contents
 `{"fdrive":{"type":"short","action":"gotosecure"}}`   drives to secure position
 
+Quick query commands for driving:
+
+`{"fdrive":{"type":"short","action":"qmotion"}}`    query current motion of filter
+response is `{"fstat":{"type":<pass>,"motion":<0:7>}}` with <0:7> being the actual position where 0 means Actual Position = Target Position and Velocity = 0
+`{"fdrive":{"type":"short","action":"qactualpos"}}`     query actual position of filter
+response is `{"fstat":{"type":<pass>,"actualpos":<actualpos>}}` with <actualpos> returning the Actual Position of the filter
+
+Setting parameters:
+
 `{"fmotor":{"type":"short","ihold":2, ... }}`   set motor parameter
 
 `{"fstall":{"type":"short","dc100":0, ... }}`   set stall detection parameter

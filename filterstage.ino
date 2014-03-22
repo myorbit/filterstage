@@ -336,6 +336,42 @@ void processMessage(aJsonObject *msg)
       else if (filter_type == "long")
         gotoSecurePosition(DRV_LONG);
     }
+	else if (fdriveitem->valuestring == "qmotion")	// query motion status
+	{
+		tmc223status *pfstat;  // Pointer to status parameter
+
+		if (filter_type == "short")
+		{
+			pfstat = &fstatShort;
+			getFullStatus1(DRV_SHORT, pfstat, NULL);
+			Serial.print("{\"fstat \":{\"type\":\"short\",\"motion\":");
+		}
+		else if (filter_type == "long")
+		{
+			pfstat = &fstatLong;
+			getFullStatus1(DRV_LONG, pfstat, NULL);
+			Serial.print("{\"fstat \":{\"type\":\"long\",\"motion\":");
+		}
+		Serial.print(pfstat->Motion);
+		Serial.println("}}");
+	}
+    else if (fdriveitem->valuestring == "qactualpos")	// query actual position
+    {
+      if (filter_type == "short")
+      {
+        actualPosShort = getFullStatus2(DRV_SHORT, NULL, NULL, NULL);
+		Serial.print("{\"fstat \":{\"type\":\"short\",\"actualpos\":");
+		Serial.print(actualPosShort);
+		Serial.println("}}");
+      }
+      else if (filter_type == "long")
+      {
+        actualPosLong = getFullStatus2(DRV_LONG, NULL, NULL, NULL);        
+		Serial.print("{\"fstat \":{\"type\":\"long\",\"actualpos\":");
+		Serial.print(actualPosLong);
+		Serial.println("}}");
+      }
+    }		
   }
 
 
