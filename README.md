@@ -21,7 +21,7 @@ and `<x>` = [-32768:32767]
 
 Example: `{"fpos":{"type":"short","pos":230}}`
 
-Other possible commands are:
+###### Other possible commands are:
 
 `{"fdrive":{"type":"short","action":"hardstop"}}`   immediate full stop
 `{"fdrive":{"type":"short","action":"softstop"}}`   stops motor deceleration phase
@@ -29,14 +29,15 @@ Other possible commands are:
 `{"fdrive":{"type":"short","action":"resetdefault"}}`   overwrite RAM with OTP contents
 `{"fdrive":{"type":"short","action":"gotosecure"}}`   drives to secure position
 
-Quick query commands for driving:
+###### Quick query commands for driving:
 
 `{"fdrive":{"type":"short","action":"qmotion"}}`    query current motion of filter
 response is `{"fstat":{"type":<pass>,"motion":<0:7>}}` with <0:7> being the actual position where 0 means Actual Position = Target Position and Velocity = 0
 `{"fdrive":{"type":"short","action":"qactualpos"}}`     query actual position of filter
 response is `{"fstat":{"type":<pass>,"actualpos":<actualpos>}}` with <actualpos> returning the Actual Position of the filter
 
-Setting parameters:
+
+###### Setting parameters:
 
 `{"fmotor":{"type":"short","ihold":2, ... }}`   set motor parameter
 
@@ -44,7 +45,7 @@ Setting parameters:
 
 **Note** Changing motor parameter, reference position, etc. is not recommended!
 
-The controller can send back the motor status or stall detection status:
+###### The controller can send back the motor status or stall detection status:
 
 `{"fstat":{"type":"short","steploss":0, ... }}`   send motor status
 `{"fstall":{"type":"short","absstall":0, ... }}`   send stall detection status
